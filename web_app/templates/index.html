@@ -1,0 +1,50 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overshare | Another Social Media App</title>
+    <link rel="stylesheet" href="https://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.min.css">
+  </head>
+  <body>
+
+    <!-- Start Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <ul class="menu">
+          <li class="menu-text">Overshare!</li>
+        </ul>
+      </div>
+    </div>
+    <!-- End Top Bar -->
+
+    <div class="callout large primary">
+      <div class="row column text-center">
+        <h1>Oversharing Timeline</h1>
+        <h2 class="subheader">Trending Stories</h2>
+      </div>
+    </div>
+
+    <!-- We can now combine rows and columns when there's only one column in that row -->
+    <div class="row medium-8 large-7 columns">
+      
+      {% for record in records %}
+      <div class="blog-post">
+        <h3><small>{{record['created_at'].strftime('%Y-%m-%d')}}</small> {{ record['title'] }}</h3>
+        <img class="thumbnail" src="https://placehold.it/850x350">
+        <p>{{record['content']}}</p>
+        <div class="callout">
+          <ul class="menu simple">
+            <li><a href="#">Author: {{record['username']}}</a></li>
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+
+
+    </div>
+  </body>
+</html>
+
+
+

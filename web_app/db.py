@@ -14,7 +14,7 @@ class Datastore:
         return self.engine.connect()
 
 
-def init_db(datastore: Datastore):
+def init(datastore: Datastore):
     with datastore.connection as conn:
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS posts (

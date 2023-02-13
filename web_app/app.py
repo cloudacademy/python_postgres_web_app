@@ -28,4 +28,5 @@ def timeline():
         return 'Is the database up and running?', 500
 
 if __name__ == '__main__':
+    db.init(dat)
     db.populate_db(dat)

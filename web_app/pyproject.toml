@@ -1,0 +1,10 @@
+[project]
+name            = "cloudacademy"
+version         = "0.0.1"
+
+dependencies    = [
+    "Flask",
+    "psycopg[binary]",
+    "SQLAlchemy",
+    "Faker"
+]

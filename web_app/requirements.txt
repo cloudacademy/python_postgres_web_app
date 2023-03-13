@@ -2,3 +2,4 @@ Flask
 psycopg[binary]
 SQLAlchemy
 Faker
+gunicorn

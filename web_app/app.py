@@ -18,8 +18,8 @@ app = Flask(__name__)
 dat = db.Datastore(
     secret_config(os.getenv('DATABASE_USER')),
     secret_config(os.getenv('DATABASE_PASS')),
-    os.getenv('DATABASE_HOST'),
-    os.getenv('DATABASE_NAME'),
+    secret_config(os.getenv('DATABASE_HOST')),
+    secret_config(os.getenv('DATABASE_NAME')),
 )
 
 

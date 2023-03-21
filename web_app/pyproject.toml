@@ -6,5 +6,6 @@ dependencies    = [
     "Flask",
     "psycopg[binary]",
     "SQLAlchemy",
-    "Faker"
+    "Faker",
+    "gunicorn"
 ]

@@ -9,6 +9,6 @@ class RouteValidation(unittest.TestCase):
         self.client = app.test_client()
 
     def test_request(self):
-        response = self.client.get('/timeline')
+        response = self.client.get('/')
         # Ensure the timeline is loading correctly
-        assert b'trending stories' in response.data.lower()
+        assert b'overshare' in response.data.lower()

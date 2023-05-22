@@ -27,6 +27,10 @@ def timeline():
     except:
         return 'Is the database up and running?', 500
 
+@app.route('/login')
+def login():
+    return 'logging in...'
+
 if __name__ == '__main__':
     db.init(dat)
     db.populate_db(dat)

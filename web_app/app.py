@@ -18,7 +18,14 @@ dat = db.Datastore(
 
 @app.route('/')
 def index():
-    return 'Welcome to Overshare! Yet another social media app.  Click <a href="/timeline">here</a> to view the timeline.'
+    return """
+    Welcome to Overshare! Yet another social media app.  
+    
+    Click <a href="/timeline">here</a> to view the timeline.
+
+    Promotion: 50% off on all Overshare merchandise! Use code "OVERSHARE" at checkout.
+
+    """
 
 @app.route('/timeline')
 def timeline():

@@ -41,6 +41,15 @@ def timeline():
     except:
         return 'Is the database up and running?', 500
 
+
+# Route to the user's profile page
+@app.route('/profile/<username>')
+def profile(username):
+    try:
+        return render_template('profile.html', records=db.get_profile(dat, username))
+    except:
+        return 'Is the database up and running?', 500
+
 if __name__ == '__main__':
     db.init(dat)
     db.populate_db(dat)

@@ -1,7 +1,14 @@
 import os
 import db
 from flask import Flask, render_template
+from pathlib import Path
 
+###############################################################################
+# Determines if the value is a file path or a string
+def secret_config(value):
+    if (path := Path(value)).exists():
+        return path.read_text()
+    return value
 ###############################################################################
 # Global Configuration
 #
@@ -9,8 +16,8 @@ from flask import Flask, render_template
 app = Flask(__name__)
 # Database engine wrapper
 dat = db.Datastore(
-    os.getenv('DATABASE_USER'),
-    os.getenv('DATABASE_PASS'),
+    secret_config(os.getenv('DATABASE_USER')),
+    secret_config(os.getenv('DATABASE_PASS')),
     os.getenv('DATABASE_HOST'),
     os.getenv('DATABASE_NAME'),
 )

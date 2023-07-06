@@ -1,0 +1,18 @@
+[project]
+name            = "webapp"
+dynamic         = ["version"]
+
+dependencies    = [
+    "Flask",
+    "psycopg[binary]",
+    "SQLAlchemy",
+    "Faker",
+    "gunicorn"
+]
+
+[build-system]
+requires        = ["setuptools"]
+build-backend   = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}

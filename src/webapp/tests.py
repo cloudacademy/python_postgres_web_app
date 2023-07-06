@@ -1,7 +1,6 @@
 import unittest
 
-from app import app
-
+from webapp.app import app
 
 class RouteValidation(unittest.TestCase):
     

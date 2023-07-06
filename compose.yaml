@@ -1,0 +1,58 @@
+networks:
+    web_to_db:
+
+
+# One or more services can be defined under the top-level key: services.
+services:
+    # The name postgres is the name of the database service.
+    # This arbitrary name becomes the hostname of the container.
+    postgres:
+        # The image to use to create the container.
+        image: postgres:15-alpine
+        # The command is passed as arguments to the ENTRYPOINT script. 
+        command: "-c shared_buffers=256MB -c max_connections=200"
+        # Instructs compose to restart the container if it shuts 
+        # down unless the container is intentionally stopped.
+        restart: unless-stopped
+        healthcheck:
+            test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_PASSWORD" -h postgres
+            interval: 3s
+            retries: 5
+        # The networks attached to the container.
+        networks:
+            - web_to_db
+        # Environment variables used to configure the database. 
+        environment:
+            - POSTGRES_USER=web_app
+            - POSTGRES_PASSWORD=74jrjdSj
+            - POSTGRES_DB=postgres
+
+    db_init:
+        image: web_app:latest
+        command: /bin/sh -c "if [ ! -f initialized.db ]; then python3 -m webapp.app && touch initialized.db; else echo 'Already initialized.'; fi"
+        networks:
+            - web_to_db
+        environment:
+            - DATABASE_HOST=postgres
+            - DATABASE_USER=web_app
+            - DATABASE_PASS=74jrjdSj
+            - DATABASE_NAME=postgres
+        depends_on: 
+            postgres:
+                condition: service_healthy
+        restart: no
+
+    web_app:
+        image: web_app:latest
+        networks:
+            - web_to_db
+        ports:
+            - "5000:9000"
+        environment:
+            - DATABASE_HOST=postgres
+            - DATABASE_USER=web_app
+            - DATABASE_PASS=74jrjdSj
+            - DATABASE_NAME=postgres
+        depends_on: 
+            postgres:
+                condition: service_healthy

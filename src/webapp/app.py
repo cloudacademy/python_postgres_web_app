@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-import db
+from webapp import db
 from flask import Flask, render_template
 
 

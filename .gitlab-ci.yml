@@ -10,3 +10,12 @@ pypackage_build_and_upload:
   artifacts:
     paths:
       - ./dist/*.whl
+
+
+# Run the tests using Docker Compose.
+# Uses the exit code of the integration_tests service container to determine success.
+tests:
+  image: docker:latest
+  stage: test
+  script:
+    - docker compose -f compose-test-runner.yaml -p ci up --exit-code-from integration_tests --build 

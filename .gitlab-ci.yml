@@ -73,5 +73,3 @@ deploy:
     name: production
     url: http://$SSH_HOST:5000
   
-  # CI/Continuous Delivery
-  when: manual

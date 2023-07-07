@@ -1,6 +1,13 @@
 services:
   - docker:dind
 
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
 # Build the wheel distribution package and upload it to the GitLab PyPi repository.
 # Save the wheel package as an artifact to be used in later stage.
 pypackage_build_and_upload:

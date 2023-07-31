@@ -2,8 +2,8 @@ FROM python:3.10-alpine
 
 WORKDIR /code
 # Copy the wheel file from the dist folder and install it using pip.
-COPY ./src/webapp .
-RUN python3 -m pip install -r requirements.txt
+COPY ./src/ .
+RUN python3 -m pip install -r webapp/requirements.txt
 
 ARG ENABLE_FLASK_DEBUG false
 ENV FLASK_APP webapp.app

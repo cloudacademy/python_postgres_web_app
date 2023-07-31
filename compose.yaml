@@ -53,6 +53,7 @@ services:
             - DATABASE_USER=web_app
             - DATABASE_PASS=74jrjdSj
             - DATABASE_NAME=postgres
+            - SIGNOZ_HOST
         depends_on: 
             postgres:
                 condition: service_healthy

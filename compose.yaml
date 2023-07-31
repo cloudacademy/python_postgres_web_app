@@ -28,7 +28,7 @@ services:
             - POSTGRES_DB=postgres
 
     db_init:
-        image: web_app:latest
+        build: .
         command: /bin/sh -c "if [ ! -f initialized.db ]; then python3 -m webapp.app && touch initialized.db; else echo 'Already initialized.'; fi"
         networks:
             - web_to_db
@@ -40,10 +40,10 @@ services:
         depends_on: 
             postgres:
                 condition: service_healthy
-        restart: no
+        restart: "no"
 
     web_app:
-        image: web_app:latest
+        build: .
         networks:
             - web_to_db
         ports:

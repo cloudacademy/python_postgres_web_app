@@ -1,5 +1,6 @@
 networks:
     web_to_db:
+    web_to_ad:
 
 
 # One or more services can be defined under the top-level key: services.
@@ -28,8 +29,8 @@ services:
             - POSTGRES_DB=postgres
 
     db_init:
-        build: .
-        command: /bin/sh -c "if [ ! -f initialized.db ]; then python3 -m webapp.app && touch initialized.db; else echo 'Already initialized.'; fi"
+        build: src/webapp
+        command: /bin/sh -c "python3 -m webapp.app"
         networks:
             - web_to_db
         environment:
@@ -43,17 +44,29 @@ services:
         restart: "no"
 
     web_app:
-        build: .
+        build: src/webapp
         networks:
             - web_to_db
+            - web_to_ad
         ports:
-            - "5000:9000"
+            - "3000:9000"
         environment:
             - DATABASE_HOST=postgres
             - DATABASE_USER=web_app
             - DATABASE_PASS=74jrjdSj
             - DATABASE_NAME=postgres
+            - ADSERVE_HOST=adserve
+            - ADSERVE_PORT=9000
+            - ADSERVE_PATH=/serve
             - SIGNOZ_HOST
         depends_on: 
             postgres:
                 condition: service_healthy
+
+    adserve:
+        build: src/adserve
+        networks:
+            - web_to_ad
+        environment:
+            - SIGNOZ_HOST
+

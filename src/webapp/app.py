@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
+from collections import namedtuple
 
 from webapp import db
 from flask import Flask, render_template
-
+import requests as req
 
 def secret_config(value):
     if (path := Path(value)).exists():
@@ -22,18 +23,30 @@ dat = db.Datastore(
     secret_config(os.getenv('DATABASE_NAME')),
 )
 
+ads = namedtuple('ads', ['host', 'port', 'path'])
+ads.host = os.getenv('ADSERVE_HOST')
+ads.port = os.getenv('ADSERVE_PORT')
+ads.path = os.getenv('ADSERVE_PATH')
 
 @app.route('/')
 def index():
-    return 'Welcome to Overshare! The social media app.  Click <a href="/timeline">here</a> to view the timeline.'
+    return render_template('index.html', 
+        records=db.timeline(dat),
+        adverts=req.get(f'http://{ads.host}:{ads.port}{ads.path}').json(),
+    )
 
-@app.route('/timeline')
-def timeline():
-    try:
-        return render_template('index.html', records=db.get_timeline(dat))
-    except:
-        return 'Is the database up and running?', 500
+# Route for the user profile page
+@app.route('/user/<username>')
+def user(username):
+    return render_template('user_detail.html', 
+        details=db.user_detail_summary(dat, username),
+        records=db.user_posts(dat, username),
+    )
 
 if __name__ == '__main__':
-    db.init(dat)
-    db.populate_db(dat)
+    try:
+        db.init(dat)
+        db.populate_db(dat)
+    except Exception as ex:
+        pass
+        

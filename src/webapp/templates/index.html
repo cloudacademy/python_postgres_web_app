@@ -25,8 +25,20 @@
       </div>
     </div>
 
+    
+  
     <!-- We can now combine rows and columns when there's only one column in that row -->
     <div class="row medium-8 large-7 columns">
+      <div class="blog-post">
+        <h3><small>personalized ad</small></h3>
+        <p>{{adverts['content']}}</p>
+    
+        <div class="callout">
+        <ul class="menu simple">
+            <li><a href="#">Company: {{adverts['adProvider']}}</a></li>
+        </ul>
+        </div>
+      </div>
       
       {% for record in records %}
       <div class="blog-post">
@@ -35,7 +47,7 @@
         <p>{{record['content']}}</p>
         <div class="callout">
           <ul class="menu simple">
-            <li><a href="#">Author: {{record['username']}}</a></li>
+            <li><a href="/user/{{record['username']}}">Author: {{record['username']}}</a></li>
           </ul>
         </div>
       </div>

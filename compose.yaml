@@ -49,7 +49,7 @@ services:
             - web_to_db
             - web_to_ad
         ports:
-            - "3000:9000"
+            - "5000:9000"
         environment:
             - DATABASE_HOST=postgres
             - DATABASE_USER=web_app

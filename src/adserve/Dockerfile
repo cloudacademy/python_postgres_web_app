@@ -6,11 +6,6 @@ COPY . ./adserve
 RUN --mount=type=cache,target=/root/.cache/pip \
     python3 -m pip install --no-cache-dir -r adserve/requirements.txt
 
-RUN python3 -m pip install \
-    opentelemetry-distro \
-    opentelemetry-exporter-otlp && \
-    opentelemetry-bootstrap -a install
-
 
 ARG ENABLE_FLASK_DEBUG false
 ENV FLASK_APP adserve.app
@@ -22,8 +17,4 @@ ENV SIGNOZ_HOST localhost
 
 EXPOSE 9000
 
-# CMD OTEL_RESOURCE_ATTRIBUTES=service.name=adserve OTEL_EXPORTER_OTLP_ENDPOINT="http://$SIGNOZ_HOST:4318"  opentelemetry-instrument \
-#     --traces_exporter otlp_proto_http \
-#     --metrics_exporter otlp_proto_http \
-#     flask run
 CMD flask run

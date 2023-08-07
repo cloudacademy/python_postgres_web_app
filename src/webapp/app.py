@@ -1,10 +1,19 @@
 import os
-from pathlib import Path
 from collections import namedtuple
+from pathlib import Path
 
-from webapp import db
-from flask import Flask, render_template
 import requests as req
+
+from flask import (
+    Flask, 
+    render_template
+)
+from opentelemetry import( 
+    metrics, 
+    trace
+)
+from webapp import db
+
 
 def secret_config(value):
     if (path := Path(value)).exists():
@@ -13,6 +22,25 @@ def secret_config(value):
 ###############################################################################
 # Global Configuration
 #
+exception_counter = metrics.get_meter("exceptions.meter").create_counter(
+    name="exceptions", 
+    description="number of exceptions caught", 
+    value_type=int
+)
+
+ads_req_counter = metrics.get_meter("ads.requested").create_counter(
+    name="ads_requested",
+    description="number of requested ads",
+    value_type=int
+)
+
+ads_rec_counter = metrics.get_meter("ads.recieved").create_counter(                                
+    name="ads_requested",
+    description="number of requested ads",
+    value_type=int
+)
+
+
 # WSGI app wrapper
 app = Flask(__name__)
 # Database engine wrapper
@@ -28,11 +56,25 @@ ads.host = os.getenv('ADSERVE_HOST')
 ads.port = os.getenv('ADSERVE_PORT')
 ads.path = os.getenv('ADSERVE_PATH')
 
+
+@app.errorhandler(Exception)
+def handle_bad_request(e):
+    exception_counter.add(1, exception_type=type(e))
+    return 'something went wrong, reload and try again.', 500
+
 @app.route('/')
 def index():
+    try:
+        ads_req_counter.add(1)
+        adverts = req.get(f'http://{ads.host}:{ads.port}{ads.path}').json()
+        ads_rec_counter.add(1)
+    except Exception as ex:
+        adverts = {}
+        exception_counter.add(1, exception_type=type(ex))
+    
     return render_template('index.html', 
         records=db.timeline(dat),
-        adverts=req.get(f'http://{ads.host}:{ads.port}{ads.path}').json(),
+        adverts=adverts,
     )
 
 # Route for the user profile page
@@ -42,6 +84,7 @@ def user(username):
         details=db.user_detail_summary(dat, username),
         records=db.user_posts(dat, username),
     )
+
 
 if __name__ == '__main__':
     try:

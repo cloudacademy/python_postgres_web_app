@@ -2,7 +2,7 @@ from random import randint
 from time import sleep
 
 from faker import Faker
-from flask import Flask
+from flask import Flask, request
 
 ###############################################################################
 # Global Configuration
@@ -10,11 +10,14 @@ from flask import Flask
 # WSGI app wrapper
 app = Flask(__name__)
 
+@app.before_request
+def before_request():
+    sleep(randint(1, 5))
 
-# Accept a username and return customized ads
 @app.route('/serve')
 def user():
-    sleep(randint(1, 5))
+    if request.args.get('raise'):
+        raise ConnectionError('cannot connect to the ad server database')
     
     return Faker().json(data_columns=[
         ('adProvider', 'company'), 

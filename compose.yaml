@@ -69,4 +69,3 @@ services:
             - web_to_ad
         environment:
             - SIGNOZ_HOST
-

@@ -113,7 +113,7 @@ if __name__ == '__main__':
         # uses the standard library to post to the /post endpoint. 
         # loops 100 times, once for each user. Uses the faker library to generate fake data.
         for n in range(1, 100):
-            req.post('http://localhost:5000/post', data={ 'title': fake.sentence(), 'user_id': n, 'content': fake.text()})
+            req.post('http://localhost:5000/post', data={ 'title': fake.sentence(), 'user_id': n, 'content': fake.text() })
 
     except Exception as ex:
         pass

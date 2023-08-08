@@ -101,6 +101,10 @@ def post():
     jobs.enqueue(translate_post, request.form['content'])
 
 
+# Register the queue shutdown handler.
+app.teardown_appcontext(jobs.stop)
+
+
 if __name__ == '__main__':
     try:
         db.init(dat)

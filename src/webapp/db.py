@@ -1,6 +1,5 @@
-from random import randint
 from faker import Faker
-from sqlalchemy import create_engine, text, select
+from sqlalchemy import create_engine, text
 
 class Datastore:
     def __init__(self, username, password, hostname, dbname):
@@ -55,15 +54,14 @@ def populate_db(datastore: Datastore):
             text("INSERT INTO users (username, name) VALUES (:username, :name);"),
             [{ 'username': fake.name(), 'name': fake.user_name() } for _ in range(100)]
         )
+        conn.commit()
 
+
+def post(datastore: Datastore, title: str, user_id: int, content: str): 
+    with datastore.connection as conn:
         conn.execute(
             text("INSERT INTO posts (title, user_id, content) VALUES (:title, :user_id, :content);"),
-            [{ 'title': fake.sentence(), 'user_id': n, 'content': fake.text()} for n in range(1, 100)]
-        )
-
-        conn.execute(
-            text("INSERT INTO messages (user_sender, user_receiver, message) VALUES (:user_sender, :user_receiver, :message);"),
-            [{ 'user_sender': randint(1, 100), 'user_receiver': randint(1, 100), 'message': fake.text()} for _ in range(100)]
+            [{ 'title': title, 'user_id': user_id, 'content': content }]
         )
         conn.commit()
 

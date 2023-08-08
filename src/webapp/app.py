@@ -4,16 +4,19 @@ from pathlib import Path
 
 import requests as req
 
+from faker import Faker
+
 from flask import (
     Flask, 
-    render_template
+    render_template,
+    request,
 )
 from opentelemetry import( 
     metrics, 
     trace
 )
 from webapp import db
-
+from jobs import Jobs, translate_post
 
 def secret_config(value):
     if (path := Path(value)).exists():
@@ -22,7 +25,7 @@ def secret_config(value):
 ###############################################################################
 # Global Configuration
 #
-exception_counter = metrics.get_meter("exceptions.meter").create_counter(
+exception_counter = metrics.get_meter("exception.meter").create_counter(
     name="exceptions", 
     description="number of exceptions caught", 
     value_type=int
@@ -40,6 +43,10 @@ ads_rec_counter = metrics.get_meter("ads.recieved").create_counter(
     value_type=int
 )
 
+
+# Post translation jobs
+jobs = Jobs()
+jobs.start()
 
 # WSGI app wrapper
 app = Flask(__name__)
@@ -86,10 +93,24 @@ def user(username):
     )
 
 
+# The following route is used to create a new post
+@app.route('/post', methods=['POST'])
+def post():
+    db.post(dat, request.form['title'], request.form['user_id'], request.form['content'])
+    # Enqueue the translation job.
+    jobs.enqueue(translate_post, request.form['content'])
+
+
 if __name__ == '__main__':
     try:
         db.init(dat)
         db.populate_db(dat)
+        fake = Faker(['ja_JP']) 
+        # uses the standard library to post to the /post endpoint. 
+        # loops 100 times, once for each user. Uses the faker library to generate fake data.
+        for n in range(1, 100):
+            req.post('http://localhost:5000/post', data={ 'title': fake.sentence(), 'user_id': n, 'content': fake.text()})
+
     except Exception as ex:
         pass
         

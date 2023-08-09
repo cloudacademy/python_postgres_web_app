@@ -16,7 +16,7 @@ from opentelemetry import(
     trace
 )
 from webapp import db
-from jobs import Jobs, translate_post
+from webapp.jobs import Jobs, translate_post
 
 def secret_config(value):
     if (path := Path(value)).exists():
@@ -27,20 +27,17 @@ def secret_config(value):
 #
 exception_counter = metrics.get_meter("exception.meter").create_counter(
     name="exceptions", 
-    description="number of exceptions caught", 
-    value_type=int
+    description="number of exceptions caught"
 )
 
 ads_req_counter = metrics.get_meter("ads.requested").create_counter(
     name="ads_requested",
-    description="number of requested ads",
-    value_type=int
+    description="number of requested ads"
 )
 
 ads_rec_counter = metrics.get_meter("ads.recieved").create_counter(                                
     name="ads_requested",
-    description="number of requested ads",
-    value_type=int
+    description="number of requested ads"
 )
 
 
@@ -66,8 +63,9 @@ ads.path = os.getenv('ADSERVE_PATH')
 
 @app.errorhandler(Exception)
 def handle_bad_request(e):
-    exception_counter.add(1, exception_type=type(e))
+    exception_counter.add(1, { 'exception_type': str(type(e)) })
     return 'something went wrong, reload and try again.', 500
+
 
 @app.route('/')
 def index():

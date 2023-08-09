@@ -14,8 +14,7 @@ class Jobs:
         self.q = Queue()
         self.q_counter = metrics.get_meter("jobs.enqueued").create_up_down_counter(
             name="jobs_queue_length",
-            description="number of jobs in the queue",
-            value_type=int
+            description="number of jobs in the queue"
         )
         self.__stop_processing = object()
 
@@ -24,7 +23,7 @@ class Jobs:
         self.q_counter.add(1)
 
     def process(self):
-        for job, args, kwargs in iter(self.q.get, self.StopProcessing):
+        for job, args, kwargs in iter(self.q.get, self.__stop_processing):
             job(*args, **kwargs)
             self.q_counter.add(-1)
 

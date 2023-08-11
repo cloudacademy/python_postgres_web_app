@@ -19,11 +19,12 @@ class Jobs:
         self.__stop_processing = object()
 
     def enqueue(self, job, *args, **kwargs):
-        self.q.put(job(*args, **kwargs))
+        self.q.put((job, args, kwargs))
         self.q_counter.add(1)
 
     def process(self):
-        for job, args, kwargs in iter(self.q.get, self.__stop_processing):
+        for item in iter(self.q.get, self.__stop_processing):
+            job, args, kwargs = item
             job(*args, **kwargs)
             self.q_counter.add(-1)
 

@@ -32,15 +32,6 @@ def init(datastore: Datastore):
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
-            CREATE TABLE messages (
-                id SERIAL PRIMARY KEY,
-                user_sender INTEGER REFERENCES users(id),
-                user_receiver INTEGER REFERENCES users(id),
-                message TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-
-
         """))
 
         conn.commit()
@@ -77,7 +68,7 @@ def timeline(datastore: Datastore):
 def user_detail_summary(datastore: Datastore, username: str):
     with datastore.connection as conn:
         return conn.execute(
-            text("SELECT u.username, u.name, u.created_at, (SELECT COUNT(p.id) FROM posts p WHERE p.user_id = u.id) as post_count, (SELECT COUNT(m.id) FROM messages m WHERE m.user_sender = u.id) as message_count FROM users u WHERE u.username = :username;"),
+            text("SELECT u.username, u.name, u.created_at, (SELECT COUNT(p.id) FROM posts p WHERE p.user_id = u.id) as post_count FROM users u WHERE u.username = :username;"),
             { 'username': username }
         ).all()[0]
 

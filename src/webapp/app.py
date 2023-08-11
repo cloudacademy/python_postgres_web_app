@@ -9,11 +9,10 @@ from faker import Faker
 from flask import (
     Flask, 
     render_template,
-    request,
+    request
 )
 from opentelemetry import( 
-    metrics, 
-    trace
+    metrics
 )
 from webapp import db
 from webapp.jobs import Jobs, translate_post
@@ -94,25 +93,36 @@ def user(username):
 # The following route is used to create a new post
 @app.route('/post', methods=['POST'])
 def post():
+    print(f'creating post: {request.form}')
     db.post(dat, request.form['title'], request.form['user_id'], request.form['content'])
     # Enqueue the translation job.
     jobs.enqueue(translate_post, request.form['content'])
+    return 'success', 200
 
 
-# Register the queue shutdown handler.
-app.teardown_appcontext(jobs.stop)
 
+import atexit
+@atexit.register
+def shutdown():
+    jobs.stop()
 
 if __name__ == '__main__':
     try:
+        import psycopg #imported to use the exception below.
         db.init(dat)
+    except:
+        pass
+        
+    try:
         db.populate_db(dat)
+        
         fake = Faker(['ja_JP']) 
         # uses the standard library to post to the /post endpoint. 
         # loops 100 times, once for each user. Uses the faker library to generate fake data.
         for n in range(1, 100):
-            req.post('http://localhost:5000/post', data={ 'title': fake.sentence(), 'user_id': n, 'content': fake.text() })
+            app.test_client().post("/post", data={ 'title': fake.sentence(), 'user_id': n, 'content': fake.text() })
 
     except Exception as ex:
-        pass
+        print(ex)
+        
         

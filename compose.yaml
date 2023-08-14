@@ -1,6 +1,7 @@
 networks:
     web_to_db:
     web_to_ad:
+    ad_to_provider:
 
 
 # One or more services can be defined under the top-level key: services.
@@ -72,6 +73,25 @@ services:
         depends_on: 
             postgres:
                 condition: service_healthy
+    
+    adprovider:
+        build:
+            context: src/adprovider
+            dockerfile: ../Dockerfile
+            args:
+                application_dir: adprovider
+        networks:
+            - ad_to_provider
+        environment:
+            - DATABASE_HOST=postgres
+            - DATABASE_USER=web_app
+            - DATABASE_PASS=74jrjdSj
+            - DATABASE_NAME=postgres
+            - SIGNOZ_HOST
+            - SERVICE_NAME=adprovider
+        depends_on: 
+            postgres:
+                condition: service_healthy
 
     adserve:
         build:
@@ -81,9 +101,13 @@ services:
                 application_dir: adserve
         networks:
             - web_to_ad
+            - ad_to_provider
         environment:
-            - SERVICE_NAME=adserve
+            - SERVICE_NAME=adprovider
             - SIGNOZ_HOST
+            - PROVIDER_HOST=adprovider
+            - PROVIDER_PORT=9000
+            - PROVIDER_PATH=/inform
 
     # Simulate traffic to the web app.
     simulate:

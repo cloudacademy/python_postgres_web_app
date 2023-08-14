@@ -1,0 +1,4 @@
+Flask
+Faker
+psycopg[binary]
+SQLAlchemy

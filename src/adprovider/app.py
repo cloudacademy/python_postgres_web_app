@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 from random import randint
-from time import sleep
-
 from flask import Flask
 from adprovider import db
 

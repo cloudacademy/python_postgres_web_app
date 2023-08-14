@@ -29,7 +29,11 @@ services:
             - POSTGRES_DB=postgres
 
     db_init:
-        build: src/webapp
+        build:
+            context: src/webapp
+            dockerfile: ../Dockerfile
+            args:
+                application_dir: webapp
         command: /bin/sh -c "python3 -m webapp.app"
         networks:
             - web_to_db
@@ -38,13 +42,18 @@ services:
             - DATABASE_USER=web_app
             - DATABASE_PASS=74jrjdSj
             - DATABASE_NAME=postgres
+            - SERVICE_NAME=overshare
         depends_on: 
             postgres:
                 condition: service_healthy
         restart: "no"
 
     web_app:
-        build: src/webapp
+        build:
+            context: src/webapp
+            dockerfile: ../Dockerfile
+            args:
+                application_dir: webapp
         networks:
             - web_to_db
             - web_to_ad
@@ -59,13 +68,27 @@ services:
             - ADSERVE_PORT=9000
             - ADSERVE_PATH=/serve
             - SIGNOZ_HOST
+            - SERVICE_NAME=overshare
         depends_on: 
             postgres:
                 condition: service_healthy
 
     adserve:
-        build: src/adserve
+        build:
+            context: src/adserve
+            dockerfile: ../Dockerfile
+            args:
+                application_dir: adserve
         networks:
             - web_to_ad
         environment:
+            - SERVICE_NAME=adserve
             - SIGNOZ_HOST
+
+    # Simulate traffic to the web app.
+    simulate:
+        build: ./src/simulate
+        networks:
+            - web_to_ad
+        depends_on: 
+            - web_app

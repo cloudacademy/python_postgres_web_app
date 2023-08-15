@@ -20,5 +20,5 @@ def delay(datastore: Datastore, time: int=None):
         time = randint(1, 3)
 
     with datastore.connection as conn:
-        conn.execute(text("pg_sleep(:time);"), [{ 'time': time }])
+        conn.execute(text("SELECT pg_sleep(:time);"), [{ 'time': time }])
         conn.commit()

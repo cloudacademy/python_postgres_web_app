@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from random import randint
+
 from flask import Flask
 from adprovider import db
 
@@ -24,5 +24,5 @@ app = Flask(__name__)
 
 @app.route('/inform')
 def inform():
-    dat.delay()
+    db.delay(dat)
     return 'success', 200

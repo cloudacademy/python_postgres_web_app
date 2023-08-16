@@ -24,8 +24,8 @@ def before_request():
 
 @app.route('/serve')
 def user():
-    if request.args.get('raise'):
-        raise ConnectionError('cannot connect to the ad server database')
+    if randint(1, 100) in range(1, 10):
+        raise Exception('Something went wrong serving the ad. Please try again')
 
     ad = Faker().json(data_columns=[
         ('adProvider', 'company'), 

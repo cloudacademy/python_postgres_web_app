@@ -2,7 +2,7 @@ networks:
     web_to_db:
     web_to_ad:
     ad_to_provider:
-    ad_to_db:
+    provider_to_db:
 
 
 # One or more services can be defined under the top-level key: services.
@@ -24,7 +24,7 @@ services:
         # The networks attached to the container.
         networks:
             - web_to_db
-            - ad_to_db
+            - provider_to_db
         # Environment variables used to configure the database. 
         environment:
             - POSTGRES_USER=web_app
@@ -84,7 +84,7 @@ services:
                 application_dir: adprovider
         networks:
             - ad_to_provider
-            - ad_to_db
+            - provider_to_db
         environment:
             - DATABASE_HOST=postgres
             - DATABASE_USER=web_app

@@ -21,6 +21,12 @@ def secret_config(value):
     if (path := Path(value)).exists():
         return path.read_text()
     return value
+
+def silently_attempt(fn, *args, **kwargs):
+    try:
+        fn(*args, **kwargs)
+    except:
+        ...
 ###############################################################################
 # Global Configuration
 #
@@ -61,20 +67,20 @@ ads.path = os.getenv('ADSERVE_PATH')
 
 
 @app.errorhandler(Exception)
-def handle_bad_request(e):
-    exception_counter.add(1, { 'exception_type': str(type(e)) })
+def handle_bad_request(ex):
+    silently_attempt(exception_counter.add, 1, { 'exception_type': str(type(ex)) })
     return 'something went wrong, reload and try again.', 500
 
 
 @app.route('/')
 def index():
     try:
-        ads_req_counter.add(1)
+        silently_attempt(ads_req_counter.add, 1)
         adverts = req.get(f'http://{ads.host}:{ads.port}{ads.path}').json()
-        ads_rec_counter.add(1)
+        silently_attempt(ads_rec_counter.add, 1)
     except Exception as ex:
         adverts = {}
-        exception_counter.add(1, exception_type=type(ex))
+        silently_attempt(exception_counter.add, 1, { 'exception_type': str(type(ex)) })
     
     return render_template('index.html', 
         records=db.timeline(dat),
@@ -107,11 +113,7 @@ def shutdown():
     jobs.stop()
 
 if __name__ == '__main__':
-    try:
-        import psycopg #imported to use the exception below.
-        db.init(dat)
-    except:
-        pass
+    silently_attempt(db.init, dat)
         
     try:
         db.populate_db(dat)

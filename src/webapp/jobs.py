@@ -6,6 +6,7 @@ from threading import Thread
 from time import sleep
 from random import randint
 
+from webapp import silently_attempt
 from opentelemetry import metrics
 
 class Jobs:
@@ -20,13 +21,13 @@ class Jobs:
 
     def enqueue(self, job, *args, **kwargs):
         self.q.put((job, args, kwargs))
-        self.q_counter.add(1)
+        silently_attempt(self.q_counter.add, 1)
 
     def process(self):
         for item in iter(self.q.get, self.__stop_processing):
             job, args, kwargs = item
             job(*args, **kwargs)
-            self.q_counter.add(-1)
+            silently_attempt(self.q_counter.add, -1)
 
     # Method that starts the processing of running jobs in a non-blocking way.
     def start(self):

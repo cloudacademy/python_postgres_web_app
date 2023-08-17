@@ -68,7 +68,7 @@ ads.path = os.getenv('ADSERVE_PATH')
 
 @app.errorhandler(Exception)
 def handle_bad_request(ex):
-    silently_attempt(exception_counter.add, 1, { 'exception_type': str(type(ex)) })
+    silently_attempt(exception_counter.add, 1, { 'exception.type': type(ex).__name__ })
     return 'something went wrong, reload and try again.', 500
 
 
@@ -80,7 +80,7 @@ def index():
         silently_attempt(ads_rec_counter.add, 1)
     except Exception as ex:
         adverts = {}
-        silently_attempt(exception_counter.add, 1, { 'exception_type': str(type(ex)) })
+        silently_attempt(exception_counter.add, 1, { 'exception.type': type(ex).__name__ })
     
     return render_template('index.html', 
         records=db.timeline(dat),

@@ -41,8 +41,8 @@ ads_req_counter = metrics.get_meter("ads.requested").create_counter(
 )
 
 ads_rec_counter = metrics.get_meter("ads.recieved").create_counter(                                
-    name="ads_requested",
-    description="number of requested ads"
+    name="ads_recieved",
+    description="number of recieved ads"
 )
 
 
@@ -99,7 +99,6 @@ def user(username):
 # The following route is used to create a new post
 @app.route('/post', methods=['POST'])
 def post():
-    print(f'creating post: {request.form}')
     db.post(dat, request.form['title'], request.form['user_id'], request.form['content'])
     # Enqueue the translation job.
     jobs.enqueue(translate_post, request.form['content'])

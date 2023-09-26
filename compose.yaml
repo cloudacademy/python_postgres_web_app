@@ -119,3 +119,6 @@ services:
             - web_to_ad
         depends_on: 
             - web_app
+        environment:
+            - SERVICE_NAME=simulate
+            - SIGNOZ_HOST

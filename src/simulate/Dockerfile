@@ -1,8 +1,10 @@
-FROM python:3.10
+FROM python:3.10-alpine
 # All application code resides inside subdirectories of the /code directory.
 WORKDIR /code
 
 COPY . .
+
+RUN --mount=type=cache,target=/var/cache/apk apk add --no-cache build-base linux-headers python3-dev
 
 RUN --mount=type=cache,target=/root/.cache/pip python3 -m \
     pip install --no-cache-dir \

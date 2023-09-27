@@ -12,6 +12,7 @@ RUN --mount=type=cache,target=/root/.cache/pip python3 -m \
     Faker \
     opentelemetry-api \
     opentelemetry-sdk \
-    opentelemetry-semantic-conventions
+    opentelemetry-semantic-conventions \
+    opentelemetry-exporter-otlp-proto-http
 
-CMD locust -f locustfile.py --headless -u 10 -r 10 --run-time 3h --host http://web_app:9000 > /dev/null 2>&1
+CMD OTEL_RESOURCE_ATTRIBUTES=service.name=$SERVICE_NAME OTEL_EXPORTER_OTLP_ENDPOINT="http://$SIGNOZ_HOST:4318" locust -f locustfile.py --headless -u 10 -r 10 --run-time 3h --host http://web_app:9000 > /dev/null 2>&1

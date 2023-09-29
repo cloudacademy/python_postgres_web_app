@@ -7,7 +7,12 @@ from time import sleep
 from random import randint
 
 from webapp import silently_attempt
-from opentelemetry import metrics
+
+try:
+    from opentelemetry import metrics
+except ImportError:
+    from unittest.mock import Mock
+    metrics = Mock()
 
 class Jobs:
     

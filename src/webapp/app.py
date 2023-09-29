@@ -11,9 +11,13 @@ from flask import (
     render_template,
     request
 )
-from opentelemetry import( 
-    metrics
-)
+
+try:
+    from opentelemetry import metrics
+except ImportError:
+    from unittest.mock import Mock
+    metrics = Mock()
+
 from webapp import db
 from webapp.jobs import Jobs, translate_post
 

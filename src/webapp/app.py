@@ -44,9 +44,9 @@ ads_req_counter = metrics.get_meter("ads.requested").create_counter(
     description="number of requested ads"
 )
 
-ads_rec_counter = metrics.get_meter("ads.recieved").create_counter(                                
-    name="ads_recieved",
-    description="number of recieved ads"
+ads_rec_counter = metrics.get_meter("ads.received").create_counter(                                
+    name="ads_received",
+    description="number of received ads"
 )
 
 
